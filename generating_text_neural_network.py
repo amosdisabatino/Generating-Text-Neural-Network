@@ -161,36 +161,33 @@ def generate_text(lenght, temperature):
     start_index + SEQ_LENGHT within the input text. This initial sequence will
     be used as the starting point for generating the subsequent text.
 
-    4 - Adds the start sequence to generated with the string " NEW: " to begin
-    text generation.
-
-    5 - It enters a loop that iterates length times, generating one character
+    4 - It enters a loop that iterates length times, generating one character
     at a time to extend the generated text.
 
-    6 - For each iteration in the loop, it prepares the input (x_predictions)
+    5 - For each iteration in the loop, it prepares the input (x_predictions)
     for the model. This input is a one-hot encoding vector representing the
     current sequence (sentence), so that the model can make predictions based
     on it. The vector is a numpy matrix with dimensions
     (1, SEQ_LENGHT, len(characters)).
 
-    7 - It makes predictions using the model on the vector x_predictions.
+    6 - It makes predictions using the model on the vector x_predictions.
     Presumably, the model is a previously trained machine learning model that
     can generate successive characters based on the current sequence.
 
-    8 - It uses a sample function (which is not defined in the function) to
+    7 - It uses a sample function (which is not defined in the function) to
     sample the next character based on the model's predictions and the
     temperature specified as the function argument. The temperature controls
     the randomness of the predictions: higher values make the predictions
     more random, while lower values make them more deterministic.
 
-    9 - Adds the sampled character (next_character) to the generated string.
+    8 - Adds the sampled character (next_character) to the generated string.
 
-    10 - Updates the current sequence (sentence) by removing the first
+    9 - Updates the current sequence (sentence) by removing the first
     character and adding next_character to the end. This update of the current
     sequence allows the model to take the context into account while generating
     the next text.
 
-    11 - At the end of the loop, it returns the generated string, which
+    10 - At the end of the loop, it returns the generated string, which
     contains the generated text.
     """
     # 1-
@@ -199,29 +196,28 @@ def generate_text(lenght, temperature):
     generated = ''
     # 3-
     sentence = text[start_index: start_index + SEQ_LENGHT]
-    # 5-
-    generated += sentence + " NEW: "
+    # 4-
     for i in range(lenght):
-        # 6-
+        # 5-
         x_predictions = np.zeros((1, SEQ_LENGHT, len(characters)))
-        for t, char in enumerate(sentence):
-            x_predictions[0, t, char_to_index[char]] = 1
-        # 7-
+        for index, character in enumerate(sentence):
+            x_predictions[0, index, char_to_index[character]] = 1
+        # 6-
         predictions = model.predict(x_predictions, verbose=0)[0]
-        # 8-
+        # 7-
         next_index = sample(predictions, temperature)
         next_character = index_to_char[next_index]
-        # 9-
+        # 8-
         generated += next_character
-        # 10-
+        # 9-
         sentence = sentence[1:] + next_character
-    # 11-
+    # 10-
     return generated
 
 
-print(generate_text(300, 0.2))
-print(generate_text(300, 0.4))
-print(generate_text(300, 0.5))
-print(generate_text(300, 0.6))
-print(generate_text(300, 0.7))
-print(generate_text(300, 0.8))
+print("Setence 1:\n", generate_text(300, 0.2), "\n")
+print("Setence 2:\n", generate_text(300, 0.4), "\n")
+print("Setence 3:\n", generate_text(300, 0.5), "\n")
+print("Setence 4:\n", generate_text(300, 0.6), "\n")
+print("Setence 5:\n", generate_text(300, 0.7), "\n")
+print("Setence 6:\n", generate_text(300, 0.8), "\n")
